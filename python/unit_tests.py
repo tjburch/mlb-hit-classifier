@@ -46,6 +46,11 @@ def test_woba_download():
 def test_ab_download():
     assert(carpenter.fg_ab == 416)
 
+def test_xwoba_load():
+    carpenter.add_xwoba("../data/2019_xwoba.csv")
+    assert(carpenter.xwoba == 0.332)
+
+
 def test_model_row():
     """
     Test model loads and is sensible

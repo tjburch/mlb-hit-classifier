@@ -4,6 +4,7 @@ args = commandArgs(trailingOnly=TRUE)
 library(baseballr)
 
 if (length(args) == 1){
+    year = as.integer(args)
     print(paste("Downloading data from",year))
     leaderboards = fg_bat_leaders(x=year, y=year, league="all", qual="y")
 } else{

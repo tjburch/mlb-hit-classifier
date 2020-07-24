@@ -12,6 +12,12 @@ playerid_reference = pd.read_csv("../data/playeridmap.csv")
 label_encoding = ['double', 'field_out', 'home_run', 'single', 'triple']
 
 def download_leaderboard_table(url):
+    """Generic function that downloads a leaderboard table from FanGraphs
+    Args:
+        url (string): URL of leaderboard
+    Returns:
+        pd.DataFrame: Dataframe with the requested page's leaderboard
+    """
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
     found = soup.find(
@@ -124,8 +130,15 @@ class player_outcomes:
         self.fg_woba = None
         
 
+    ## ///////////////////////////////////////
+    ##          Add Functions
+    ## Add data from external data sources
+    ## ///////////////////////////////////////
     def add_fg_woba(self, year):
-        # Add woba from fangraphs
+        """Downloads wOBA from FanGraphs, adds to
+        Args:
+            year (int): Year to evaluate
+        """
 
         # Download
         woba_table_url = f"https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=8&season={year}&month=0&season1={year}&ind=0&team=0&rost=0&age=0&filter=&players=0&startdate={year}-01-01&enddate={year}-12-31&sort=16,d&page=1_2000"
@@ -144,7 +157,10 @@ class player_outcomes:
             print("Failed to get FG wOBA")
 
     def add_fg_ab(self, year):
-
+        """Download ABs from FanGraphs and add for player
+        Args:
+            year (int): Year to evaluate
+        """
         # Download
         ab_table_url = f"https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=0&season={year}&month=0&season1={year}&ind=0&team=0&rost=0&age=0&filter=&players=0&startdate={year}-01-01&enddate={year}-12-31&page=1_2000"
         df = download_leaderboard_table(ab_table_url)
@@ -161,7 +177,26 @@ class player_outcomes:
         except:
             print("Failed to get FG AB")
 
+    def add_xwoba(self, csv_file):
+        """ Add xwoba to player (from baseball savant)
+        Args:
+            csv_file (string): Location of downloaded csv file 
+        """
+        df = pd.read_csv(csv_file)
+        df = df[df["player_id"]==self.playerid]
+        try:
+            if len(df) == 1:
+                self.xwoba = float(df["est_woba"].iloc[0])
+        except:
+            print("Failed to get xWOBA from file {0}".format(csv_file))
+
     def eval_woba(self, woba_calculator) -> float:
+        """ Evaluates wOBA
+        Args:
+            woba_calculator (woba_calculator): object with wOBA weights
+        Returns:
+            float: wOBA given calculator weight and player's outcomes
+        """
         if self.fg_ab is None:
             print("Error: set FG wOBA first!")
             return 0
@@ -176,7 +211,16 @@ class player_outcomes:
             ) / (self.fg_ab + self.bb + self.hbp + self.sf)
 
 
+
+    ## ///////////////////////////////////////
+    ##          Model Functions
+    ## Apply the model, get probability outputs
+    ## ///////////////////////////////////////
     def eval_model(self, model_path):
+        """ Evaluates model against instances
+        Args:
+            model_path (string): location of XGBclassifier
+        """
         # Load the model
         model = xgb.XGBClassifier()
         self.model = model.load_model(model_path)
@@ -187,7 +231,16 @@ class player_outcomes:
             self.df[f"{label_encoding[idx]}_prob"] = response[:,idx]
 
 
-    def eval_model_woba(self, woba_calculator):
+    def eval_model_woba(self, woba_calculator) -> float:
+        """Calculate wOBA based on model probabilities
+        Args:
+            woba_calculator (woba_calculator): object with wOBA weights
+        Raises:
+            ValueError: Needs ABs from FanGraphs set
+        Returns:
+            float: wOBA where hit-types are probabilities from model
+        """
+
         if (self.fg_ab==None):
             raise ValueError("fg_ab not set")
 

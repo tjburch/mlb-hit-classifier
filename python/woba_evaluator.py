@@ -57,13 +57,13 @@ class woba_calculator:
         ) / (ab + bb + hbp + sf)
 
 
-class player_outcomes:
+class Outcomes:
     """object to aggregate outcomes from player ID"""
 
     def __init__(self, playerid, start="2019-03-01", end="2019-11-03"):
 
         # Wrangle the DF
-        player = statcast_batter(start, end, playerid)
+        player = statcast_batter(start, end, int(playerid))
         player = player[~player["events"].isna()]  # Drop nas
         player = player[player["game_type"] == "R"]  # Regular Season games only
 
@@ -144,7 +144,6 @@ class player_outcomes:
         woba_table_url = f"https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=8&season={year}&month=0&season1={year}&ind=0&team=0&rost=0&age=0&filter=&players=0&startdate={year}-01-01&enddate={year}-12-31&sort=16,d&page=1_2000"
         df = download_leaderboard_table(woba_table_url)
         # Add playerID
-        id_df = playerid_reference[["FANGRAPHSNAME", "MLBID"]]
         df = df.merge(
             playerid_reference, how="left", left_on="Name", right_on="FANGRAPHSNAME"
         )
@@ -166,7 +165,6 @@ class player_outcomes:
         df = download_leaderboard_table(ab_table_url)
 
         # Add playerID
-        id_df = playerid_reference[["FANGRAPHSNAME", "MLBID"]]
         df = df.merge(
             playerid_reference, how="left", left_on="Name", right_on="FANGRAPHSNAME"
         )
@@ -243,11 +241,6 @@ class player_outcomes:
 
         if (self.fg_ab==None):
             raise ValueError("fg_ab not set")
-
-        print(self.df["single_prob"].sum())
-        print(self.fg_ab )
-        print(self.bb)
-        print(woba_calculator.w2B)
 
         return ((woba_calculator.wBB * self.bb
             + woba_calculator.wHBP * self.hbp

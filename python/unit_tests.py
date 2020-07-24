@@ -3,7 +3,7 @@ Some simple unit tests for sanity checks in development
 """
 
 from woba_evaluator import *
-carpenter  = player_outcomes(572761)
+carpenter  = Outcomes(572761)
 carpenter.add_fg_woba(2019)
 carpenter.add_fg_ab(2019)
 carpenter.eval_model('../models/final_model')

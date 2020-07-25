@@ -55,13 +55,10 @@ def update_data(year):
 if __name__ == "__main__":
     
     # Get list of players we want
-    # Qualified batters, top 100 by wOBA
+    # Qualified batters
     update_data(args.year)
-    leaders = pd.read_csv("../data/leaderboards.csv")
-    #leaders = download_leaderboard_table(
-    #    f"https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=y&type=8&season={args.year}&month=0&season1={args.year}&ind=0&team=0&rost=0&age=0&filter=&players=0&startdate={args.year}-01-01&enddate={args.year}-12-31&sort=16,d&page=1_140"
-    #    )
-    
+    leaders = pd.read_csv(f"../data/leaderboards_{args.year}.csv")
+
     # Get Their MLBID
     leaders["playerid"] = leaders["playerid"].astype(str)
     leaders = leaders.merge(
@@ -75,11 +72,12 @@ if __name__ == "__main__":
         write.writerow([
             "idx","name", "playerid", "fg_woba", "model_woba", "xwoba",
             "bb","hbp","single","double","triple","hr",
-            "p_single","p_double","p_triple","p_hr"])
+            "p_single","p_double","p_triple","p_hr","babip"])
 
         # Generate outcome object for each
         for i in tqdm.tqdm(range(len(leaders["MLBID"]))):
             playerid = leaders["MLBID"][i]
+            #print(f"Doing {leaders['Name'][i]} ({playerid})")
             outcomes, model_woba = generate_outcomes(playerid)
             write.writerow([
                 i,
@@ -97,6 +95,8 @@ if __name__ == "__main__":
                 outcomes.df["single_prob"].sum(),
                 outcomes.df["double_prob"].sum(),
                 outcomes.df["triple_prob"].sum(),
-                outcomes.df["home_run_prob"].sum()])
+                outcomes.df["home_run_prob"].sum(),
+                leaders["BABIP"][i]
+                ])
             
             del outcomes # python GC should clean this up, but just to be safe

@@ -140,16 +140,15 @@ class Outcomes:
             year (int): Year to evaluate
         """
 
-        # Download
-        woba_table_url = f"https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=8&season={year}&month=0&season1={year}&ind=0&team=0&rost=0&age=0&filter=&players=0&startdate={year}-01-01&enddate={year}-12-31&sort=16,d&page=1_2000"
-        df = download_leaderboard_table(woba_table_url)
-        # Add playerID
-        df = df.merge(
-            playerid_reference, how="left", left_on="Name", right_on="FANGRAPHSNAME"
+        leaders = pd.read_csv(f"../data/uq_leaderboards_{year}.csv") #TODO make generic year
+        # Get Their MLBID
+        leaders["playerid"] = leaders["playerid"].astype(str)
+        leaders = leaders.merge(
+            playerid_reference[["IDFANGRAPHS", "MLBID"]], how="left", left_on="playerid", right_on="IDFANGRAPHS"
         )
 
         try:
-            fg_player = df[df["MLBID"] == self.playerid]
+            fg_player = leaders[leaders["MLBID"] == self.playerid]
             if len(fg_player) == 1:
                 self.fg_woba = float(fg_player["wOBA"].iloc[0])
         except:
@@ -160,16 +159,16 @@ class Outcomes:
         Args:
             year (int): Year to evaluate
         """
-        # Download
-        ab_table_url = f"https://www.fangraphs.com/leaders.aspx?pos=all&stats=bat&lg=all&qual=0&type=0&season={year}&month=0&season1={year}&ind=0&team=0&rost=0&age=0&filter=&players=0&startdate={year}-01-01&enddate={year}-12-31&page=1_2000"
-        df = download_leaderboard_table(ab_table_url)
 
-        # Add playerID
-        df = df.merge(
-            playerid_reference, how="left", left_on="Name", right_on="FANGRAPHSNAME"
+        leaders = pd.read_csv(f"../data/uq_leaderboards_{year}.csv") #TODO make generic year
+        # Get Their MLBID
+        leaders["playerid"] = leaders["playerid"].astype(str)
+        leaders = leaders.merge(
+            playerid_reference[["IDFANGRAPHS", "MLBID"]], how="left", left_on="playerid", right_on="IDFANGRAPHS"
         )
+
         try:
-            fg_player = df[df["MLBID"] == self.playerid]
+            fg_player = leaders[leaders["MLBID"] == self.playerid]
             if len(fg_player) == 1:
                 self.fg_ab = float(fg_player["AB"].iloc[0])
         except:

@@ -1,9 +1,12 @@
 # mlb-hit-classifier
-Development of a classification model for hit outcome
+Development of a classification model for hit outcome. The development of this model was tracked in the following blog posts:
 
-[Part 1](http://tylerjamesburch.com/blog/baseball/hit-classifier-1)
+[Part 1](http://tylerjamesburch.com/blog/baseball/hit-classifier-1): Model Selection.
 
-[Part 2](http://tylerjamesburch.com/blog/baseball/hit-classifier-2)
+[Part 2](http://tylerjamesburch.com/blog/baseball/hit-classifier-2): Optimization. Follows the code in ```notebooks/2-added-variables.ipynb```.
 
-For now, the notebooks in this repository are developed as working code, see the posts for the thought process and approach.
+[Part 3](http://tylerjamesburch.com/blog/baseball/hit-classifier-3): Re-sampling Methods. Follows the code in ```notebooks/3-resample.ipynb```.
 
+[Part 4](http://tylerjamesburch.com/blog/baseball/hit-classifier-4): Application and Reflection. Data generation in this post uses ```python/woba_data_generate.py```. The code for visualization is in ```notebooks/4-application.ipynb```.
+
+The final model is at ```models/final_model```.

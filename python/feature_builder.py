@@ -9,7 +9,7 @@ import pandas as pd
 
 def add_spray_angle(df):
     df["spray_angle"] = np.arctan((df["hc_x"]-125.42)/(198.27-df["hc_y"]))*180/np.pi*.75
-    df["adj_spray_angle"] = df .apply(lambda row: -row["spray_angle"] if row["stand"] == "L" else row["spray_angle"], axis=1)
+    df["adj_spray_angle"] = df.apply(lambda row: -row["spray_angle"] if row["stand"] == "L" else row["spray_angle"], axis=1)
     return df
 
 def add_sprint_speed(df, year):

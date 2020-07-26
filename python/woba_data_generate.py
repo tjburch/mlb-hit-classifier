@@ -70,7 +70,7 @@ if __name__ == "__main__":
         write = csv.writer(csvfile)
         # Write header line
         write.writerow([
-            "idx","name", "playerid", "fg_woba", "model_woba", "xwoba",
+            "idx","name", "team", "playerid", "fg_woba", "model_woba", "xwoba",
             "bb","hbp","single","double","triple","hr",
             "p_single","p_double","p_triple","p_hr","babip"])
 
@@ -82,6 +82,7 @@ if __name__ == "__main__":
             write.writerow([
                 i,
                 leaders["Name"][i],
+                leaders["Team"][i],
                 int(playerid),  # keep both as cross-check
                 outcomes.fg_woba,
                 model_woba, 

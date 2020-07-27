@@ -1,7 +1,7 @@
 # mlb-hit-classifier
 Development of a classification model for hit outcome. The development of this model was tracked in the following blog posts:
 
-[Part 1](http://tylerjamesburch.com/blog/baseball/hit-classifier-1): Model Selection.
+[Part 1](http://tylerjamesburch.com/blog/baseball/hit-classifier-1): Model Selection. Follows the code in ```notebooks/1-model-selection.ipynb```.
 
 [Part 2](http://tylerjamesburch.com/blog/baseball/hit-classifier-2): Optimization. Follows the code in ```notebooks/2-added-variables.ipynb```.
 
